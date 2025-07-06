@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>商品詳情</title>
+
+  <!-- 樣式與功能 -->
+  <link rel="stylesheet" href="/css/index.css" />
+  <script defer src="/js/product.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <style>
+    .spec-group {
+      margin: 20px 0;
+    }
+
+    .spec-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-start;
+    }
+
+    .spec-options button {
+      padding: 8px 12px;
+      min-width: 60px;
+      border: 1px solid #ccc;
+      background: white;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .spec-options button.active {
+      background: black;
+      color: white;
+    }
+
+    /* ✅ 手機板：讓規格選項按鈕自動排三欄 */
+    @media screen and (max-width: 768px) {
+      .spec-options button {
+        flex: 1 1 calc(33.333% - 10px);
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 🖤 提示 -->
+  <div class="top-banner">加入會員贈購物金$100</div>
+
+  <!-- 🖤 導覽列 -->
+  <header class="navbar">
+    <div class="nav-left">
+      <button class="menu-btn" id="menuToggle">
+        <span class="material-icons">menu</span>
+      </button>
+    </div>
+
+    <div class="nav-center">
+      <img src="/shengxin/聖欣LOGO.png" alt="Logo" class="logo" onclick="location.href='/shengxin/index.html'">
+    </div>
+
+    <div class="nav-right">
+      <span class="material-icons">search</span>
+      <span class="material-icons shopping_cart">shopping_cart</span>
+      <span class="material-icons">list_alt</span>
+      <span class="material-icons person-icon">person</span>
+    </div>
+  </header>
+
+  <!-- 💻 桌機分類選單 -->
+  <nav class="desktop-category-bar category-list-on-page" id="desktopCategoryBar"></nav>
+
+  <!-- 📱 手機側邊欄 -->
+  <aside class="side-menu" id="sideMenu">
+    <button class="close-btn" id="closeMenu">✕</button>
+    <div class="menu-logo">
+      <img src="/shengxin/聖欣LOGO.png" alt="Logo">
+    </div>
+    <div class="search-box">
+      <input type="text" placeholder="找商品">
+      <button><span class="material-icons">search</span></button>
+    </div>
+    <ul class="category-list" id="categoryList">
+      <!-- JS 載入分類 -->
+    </ul>
+  </aside>
+
+  <!-- ✅ 主畫面內容 -->
+  <main class="product-detail-page">
+    <div class="product-detail">
+      <div class="product-left">
+        <img id="mainImage" src="" alt="商品圖片" class="product-main-img">
+        <div class="product-thumbnails" id="thumbnailContainer"></div>
+      </div>
+
+      <div class="product-right">
+        <h2 id="productName">商品名稱</h2>
+        <p id="productPrice">NT$ 0</p>
+        <!-- ✅ 商品規格區塊 -->
+        <div id="productSpecs" class="specs">
+          <!-- JS 載入規格群組與選項 -->
+        </div>
+        <button class="add-to-cart-btn">加入購物車</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const currentBrand = window.location.pathname.split("/")[1];
+
+      // ✅ 小人頭跳轉登入
+      document.querySelector('.material-icons.person-icon')?.addEventListener('click', () => {
+        window.location.href = `/${currentBrand}/login.html`;
+      });
+
+      // ✅ 購物車跳轉 cart.html
+      document.querySelector('.material-icons.shopping_cart')?.addEventListener('click', () => {
+        window.location.href = `/${currentBrand}/cart.html`;
+      });
+    });
+  </script>
+</body>
+</html>

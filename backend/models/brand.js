@@ -1,0 +1,40 @@
+const mongoose = require('mongoose');
+
+const brandSchema = new mongoose.Schema({
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
+  name: String,
+  siteName: String,
+  email: String,
+  contactEmail: String,
+  phone: String,
+  senderName: String,
+  address: String,
+  taxId: String,
+  showContactEmail: Boolean,
+  showPhone: Boolean,
+  showAddress: Boolean,
+  showTaxId: Boolean,
+  facebook: String,
+  instagram: String,
+  line: String,
+  youtube: String,
+  domain: String,
+  subdomain: String,
+  seoTitle: String,
+  seoSubtitle: String,
+  seoDesc: String,
+  seoKeywords: String,
+  faviconUrl: String,
+  ogTitle: String,
+  ogDesc: String,
+  ogImageUrl: String,
+  enableAdultCheck: Boolean,
+  disableRightClick: Boolean,
+  showCookieNotice: Boolean,
+  logoUrl: String,
+  bannerWideUrl: String,
+  bannerMobileUrl: String,
+
+}, { timestamps: true });
+
+module.exports = mongoose.model('Brand', brandSchema);

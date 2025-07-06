@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>商品列表 - 寓棠選貨</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/css/admin.css">
+  <script defer src="/js/admin_products.js"></script>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>CHF 後台選單</h2>
+    <ul>
+      <li><a href="/shengxin/admin/dashboard.html">首頁</a></li>
+      <li><a href="/shengxin/admin/admin_categories.html">商品分類</a></li>
+      <li><a href="/shengxin/admin/admin_products.html">商品列表</a></li>
+      <li><a href="/shengxin/admin/admin_account.html">官網設定</a></li>
+      <li><a href="/shengxin/admin/login.html">登出</a></li>
+    </ul>
+  </div>
+
+  <div class="main">
+    <h1>商品列表</h1>
+
+    <div class="controls">
+      <input type="text" id="searchInput" placeholder="搜尋商品名稱" />
+      <button onclick="searchProducts()">搜尋</button>
+      <button onclick="location.href='/shengxin/admin/admin_add.html'">➕ 新增商品</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>首圖</th>
+          <th>名稱</th>
+          <th>價格</th>
+          <th>規格</th>
+          <th>分類</th>
+          <th>新品</th>
+          <th>上架</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="productTableBody">
+        <!-- 商品資料由 JS 動態載入 -->
+      </tbody>
+    </table>
+
+    <div class="pagination" id="pagination"></div>
+  </div>
+</body>
+</html>

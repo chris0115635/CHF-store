@@ -1,0 +1,83 @@
+<!-- ✅ 路徑：/public/shengxin/index.html -->
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>寓棠選貨｜首頁</title>
+
+  <!-- 样式與功能 -->
+  <link rel="stylesheet" href="/css/index.css" />
+  <script defer src="/js/index.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+</head>
+<body>
+  <!-- 🖤 提示 -->
+  <div class="top-banner">加入會員贈購物金$100</div>
+
+  <!-- 🖤 導覽列（三槓 / LOGO / 功能） -->
+  <header class="navbar">
+    <div class="nav-left">
+      <button class="menu-btn" id="menuToggle">
+        <span class="material-icons">menu</span>
+      </button>
+    </div>
+
+    <div class="nav-center">
+      <img src="./聖欣LOGO.png" alt="Logo" class="logo" onclick="location.href='/'">
+    </div>
+
+    <div class="nav-right">
+      <span class="material-icons">search</span>
+      <span class="material-icons shopping_cart">shopping_cart</span>
+      <span class="material-icons">list_alt</span>
+      <span class="material-icons person-icon">person</span>
+    </div>
+  </header>
+
+  <!-- 💻 桌機分類選單（JS 載入） -->
+  <nav class="desktop-category-bar category-list-on-page" id="desktopCategoryBar"></nav>
+
+  <!-- 📱 手機側欄分類 -->
+  <aside class="side-menu" id="sideMenu">
+    <button class="close-btn" id="closeMenu">✕</button>
+    <div class="menu-logo">
+      <img src="./聖欣LOGO.png" alt="Logo">
+    </div>
+    <div class="search-box">
+      <input type="text" placeholder="找商品">
+      <button><span class="material-icons">search</span></button>
+    </div>
+    <ul class="category-list" id="categoryList">
+      <!-- JS 載入分類 -->
+    </ul>
+  </aside>
+
+  <!-- 🖤 主視覺 -->
+  <main class="main-banner">
+    <picture>
+      <source media="(max-width: 768px)" srcset="./banner_mobile.jpg">
+      <img src="./banner_wide.jpg" alt="主視覺">
+    </picture>
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const currentBrand = window.location.pathname.split("/")[1];
+
+      // ✅ 小人頭點擊跳轉登入頁
+      document.querySelector('.material-icons.person-icon')?.addEventListener('click', () => {
+        window.location.href = `/${currentBrand}/login.html`;
+      });
+
+      // ✅ 購物車點擊跳轉 cart.html
+      document.querySelector('.material-icons.shopping_cart')?.addEventListener('click', () => {
+        window.location.href = `/${currentBrand}/cart.html`;
+      });
+    });
+  </script>
+</body>
+</html>
+
+
+

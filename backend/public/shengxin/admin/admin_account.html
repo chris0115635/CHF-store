@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CHF 官網設定</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap">
+   <script>
+      alert('TOKEN 是：' + localStorage.getItem('token'));
+
+    // ✅ 這段 JS：如果沒登入，跳回 login 頁面
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('請先登入');
+      window.location.href = 'shengxin/admin/login.html';
+    }
+     // ✅ 加入錯誤監聽：偵測是誰載入了 undefined
+     window.addEventListener('error', e => {
+     const tag = e.target?.tagName;
+     const src = e.target?.src || e.target?.href;
+     if ((tag === 'SCRIPT' || tag === 'IMG' || tag === 'LINK') && src) {
+      console.warn('⚠️ 無法載入資源：', tag, src);
+    }
+  }, true);
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      margin: 0;
+      display: flex;
+    }
+    .sidebar {
+      background: #1f1f2e;
+      color: white;
+      width: 250px;
+      padding: 20px;
+      position: fixed;
+      top: 0; left: 0px;
+      height: 100vh;
+      overflow-y: auto;
+      transition: left 0.3s ease;
+      z-index: 1000;
+    }
+    .sidebar.hidden {
+      left: -250px;
+    }
+    .sidebar h3 { margin-bottom: 20px; font-size: 18px; }
+    .sidebar ul { list-style: none; padding: 0; }
+    .sidebar li { padding: 10px 0; cursor: pointer; }
+    .sidebar li:hover { background: #333; }
+    .submenu { padding-left: 15px; display: none; }
+    .submenu li { font-size: 14px; }
+    .main {
+      margin-left: 250px;
+      padding: 40px;
+      flex-grow: 1;
+      background: #f8f9fb;
+      transition: margin-left 0.3s ease;
+      width: calc(100% - 250px);
+    }
+    .toggle-btn {
+      display: none;
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      font-size: 24px;
+      background: #1f1f2e;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      z-index: 1001;
+      cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      .sidebar {
+        left: -250px;
+      }
+      .sidebar.show {
+        left: 0;
+      }
+      .main {
+        margin-left: 0;
+        width: 100%;
+        padding: 60px 20px 20px;
+      }
+      .toggle-btn {
+        display: block;
+      }
+    }
+    h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+    .section {
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.05);
+    }
+    .section h3 {
+      font-size: 18px;
+      border-left: 4px solid #4f46e5;
+      padding-left: 10px;
+      margin-bottom: 15px;
+    }
+    .form-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      display: block;
+    }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .form-group .inline {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .form-group img.preview {
+      max-width: 200px;
+      display: block;
+      margin-top: 10px;
+    }
+    .save-btn {
+      background: #4f46e5;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .save-btn:hover {
+      background: #4338ca;
+    }
+    .inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex-wrap: wrap;
+  }
+
+ .inline input[type="text"],
+ .inline input[type="email"],
+ .inline input[type="tel"] {
+  flex: 1;
+  min-width: 200px;
+ }
+
+ .inline label {
+  white-space: nowrap;
+ }
+
+ @media (max-width: 768px) {
+  .inline {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .inline input {
+    width: 100%;
+  }
+ }
+  </style>
+</head>
+<body>
+  <div class="toggle-btn" onclick="toggleSidebar()">☰</div>
+  <!-- 左側選單 -->
+  <nav class="sidebar" id="sidebar">
+    <h3>CHF 後台選單</h3>
+    <ul>
+      <li onclick="toggleSubMenu('productMenu')">商品管理 ▾</li>
+      <ul class="submenu" id="productMenu">
+        <li>商品分類</li>
+        <li>商品列表</li>
+        <li>庫存管理</li>
+        <li>商品排序</li>
+      </ul>
+      <li onclick="toggleSubMenu('orderMenu')">訂單管理 ▾</li>
+      <ul class="submenu" id="orderMenu">
+        <li>所有訂單</li>
+        <li>訂單設定</li>
+      </ul>
+      <li onclick="toggleSubMenu('promoMenu')">促銷管理 ▾</li>
+      <ul class="submenu" id="promoMenu">
+        <li>購物金管理</li>
+        <li>免運促銷</li>
+        <li>全單優惠</li>
+        <li>指定優惠</li>
+      </ul>
+      <li onclick="toggleSubMenu('memberMenu')">會員管理 ▾</li>
+      <ul class="submenu" id="memberMenu">
+        <li>會員列表</li>
+        <li>功能設定</li>
+        <li>等級設定</li>
+        <li>訊息管理</li>
+      </ul>
+      <li onclick="toggleSubMenu('siteMenu')">官網設定 ▾</li>
+      <ul class="submenu" id="siteMenu">
+        <li>頁面管理</li>
+        <li>商品設定</li>
+        <li style="font-weight:bold;color:#4f46e5;">基本資訊</li>
+        <li>收款管理</li>
+        <li>送貨管理</li>
+        <li>退貨管理</li>
+      </ul>
+      <li>店員管理</li>
+      <li>分銷連結</li>
+      <li>登出</li>
+    </ul>
+  </nav>
+
+  <!-- 主內容區 -->
+  <div class="main">
+    <h2>官網設定｜基本資訊</h2>
+
+<div class="section">
+  <h3>商店基本資訊</h3>
+  <div class="form-group">
+    <!-- 第一排 -->
+    <div class="form-row">
+      <label>商店名稱</label>
+      <input type="text" placeholder="輸入商店名稱">
+    </div>
+    <div class="form-row">
+      <label>網站名稱</label>
+      <input type="text" placeholder="用於 SEO 與搜尋顯示">
+    </div>
+    <div class="form-row">
+      <label>E-mail</label>
+      <input type="email" placeholder="通知發送用 Email">
+    </div>
+    <div class="form-row">
+      <label>寄件人姓名</label>
+      <input type="text">
+    </div>
+
+    <!-- 第二排 -->
+    <div class="form-row">
+      <label>客服 E-mail</label>
+      <input type="email" placeholder="顯示於官網尾部">
+    </div>
+    <div class="form-row">
+      <label>連絡電話</label>
+      <input type="tel" placeholder="顯示於官網尾部">
+    </div>
+    <div class="form-row">
+      <label>商店地址</label>
+      <input type="text">
+    </div>
+    <div class="form-row">
+      <label>統一編號</label>
+      <input type="text">
+    </div>
+
+    <!-- 第三排：checkbox 對齊 -->
+    <div class="form-row checkbox-row">
+      <label>
+        <input type="checkbox" id="showSupportEmail">
+        顯示客服 E-mail 於官網頁尾
+      </label>
+    </div>
+    <div class="form-row checkbox-row">
+      <label>
+        <input type="checkbox" id="showPhone">
+        顯示連絡電話於官網頁尾
+      </label>
+    </div>
+    <div class="form-row checkbox-row">
+      <label>
+        <input type="checkbox" id="showAddress">
+        顯示商店地址於官網頁尾
+      </label>
+    </div>
+    <div class="form-row checkbox-row">
+      <label>
+        <input type="checkbox" id="showTaxId">
+        顯示統一編號於官網頁尾
+      </label>
+    </div>
+  </div>
+</div>
+
+<style>
+.form-group {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.form-row {
+  display: flex;
+  flex-direction: column;
+}
+.form-row label {
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+.checkbox-row {
+  flex-direction: row;
+  align-items: center;
+}
+.checkbox-row label {
+  font-weight: normal;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+@media (max-width: 768px) {
+  .form-group {
+    grid-template-columns: 1fr;
+  }
+  .checkbox-row label {
+    white-space: normal;
+    flex-wrap: wrap;
+    line-height: 1.5;
+  }
+}
+</style>
+
+
+
+
+    <div class="section">
+      <h3>前台社群連結</h3>
+      <div class="form-group">
+        <label>Facebook 粉專連結</label><input type="url">
+        <label>Instagram</label><input type="url">
+        <label>LINE ID</label><input type="text">
+        <label>Youtube</label><input type="url">
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>商店網域設定</h3>
+      <div class="form-group">
+        <label>目前網址（唯讀）</label><input type="text" readonly value="https://你的網址.bvshop.tw">
+        <label>子網域名稱</label><input type="text">
+        <label>獨立網域</label><input type="text">
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>SEO 相關設定</h3>
+      <div class="form-group">
+        <label>首頁標題 (SEO Title)</label><input type="text">
+        <label>分頁標題</label><input type="text">
+        <label>首頁描述 (Description)</label><textarea rows="3"></textarea>
+        <label>關鍵字 (Keywords)</label><input type="text" placeholder="用逗號分隔關鍵字">
+      </div>
+    </div>
+
+    <div class="section">
+  <h3>Favicon 圖示設定</h3>
+  <div class="form-group">
+    <label>上傳 Favicon（128px*128px）</label>
+    <input type="file" name="favicon">
+    <img id="faviconPreview" class="preview" src="#" alt="預覽圖示" style="display:none;">
+  </div>
+</div>
+
+<div class="section">
+  <h3>社群連結縮圖設定</h3>
+  <div class="form-group">
+    <label>社群連結標題</label><input type="text" name="ogTitle">
+    <label>社群連結描述</label><textarea rows="2" name="ogDesc"></textarea>
+    <label>社群縮圖（建議尺寸：1200x630）</label><input type="file" name="ogImage">
+    <img id="ogPreview" class="preview" src="#" alt="預覽圖" style="display:none;">
+  </div>
+</div>
+
+<div class="section">
+  <h3>LOGO 圖示設定</h3>
+  <div class="form-group">
+    <label>上傳 LOGO（建議寬 200px）</label>
+    <input type="file" name="logo">
+    <img id="logoPreview" class="preview" src="#" alt="Logo 預覽" style="display:none;">
+  </div>
+</div>
+
+<div class="section">
+  <h3>主視覺圖（電腦版 Banner）</h3>
+  <div class="form-group">
+    <label>上傳 Banner（建議尺寸 1320x600）</label>
+    <input type="file" name="bannerWide">
+    <img id="bannerWidePreview" class="preview" src="#" alt="Banner 寬版預覽" style="display:none;">
+  </div>
+</div>
+
+<div class="section">
+  <h3>主視覺圖（手機版 Banner）</h3>
+  <div class="form-group">
+    <label>上傳 Banner（建議尺寸 750x800）</label>
+    <input type="file" name="bannerMobile">
+    <img id="bannerMobilePreview" class="preview" src="#" alt="Banner 手機預覽" style="display:none;">
+  </div>
+</div>
+
+<div class="section">
+  <h3>進階設定</h3>
+  <div class="form-group">
+    <label><input type="checkbox" name="enableAdultCheck"> 啟用商店 18 禁確認</label>
+    <label><input type="checkbox" name="disableRightClick"> 禁用滑鼠右鍵</label>
+    <label><input type="checkbox" name="showCookieNotice"> 顯示 Cookie 條款視窗</label>
+  </div>
+</div>
+
+<button class="save-btn">儲存設定</button>
+
+  </div>
+
+  <script>
+    function toggleSubMenu(id) {
+      const submenu = document.getElementById(id);
+      submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
+    }
+  </script>
+
+  <script>
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('show');
+  }
+</script>
+
+
+</body>
+<script src="../../js/admin_account.js"></script>
+</html>
