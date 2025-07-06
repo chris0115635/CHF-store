@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CHF 範本頁</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap">
+  <script>
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('請先登入');
+      window.location.href = './login.html';
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .sidebar {
+      background: #1f1f2e;
+      color: white;
+      width: 250px;
+      padding: 20px;
+      position: fixed;
+      top: 0; left: 0;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+    .sidebar.show {
+      left: 0;
+    }
+    .sidebar h3 { margin-bottom: 20px; font-size: 18px; }
+    .sidebar ul { list-style: none; padding: 0; }
+    .sidebar li {
+      padding: 10px 0;
+      cursor: pointer;
+    }
+    .sidebar li:hover { background: #333; }
+    .submenu {
+      padding-left: 15px;
+      display: none;
+    }
+    .submenu li {
+      font-size: 14px;
+    }
+    .main {
+      margin-left: 250px;
+      padding: 40px;
+      flex-grow: 1;
+      background: #f8f9fb;
+      overflow-y: auto;
+      width: calc(100% - 250px);
+    }
+    .toggle-btn {
+      display: none;
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      font-size: 24px;
+      background: #1f1f2e;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      z-index: 1001;
+      cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      .sidebar { left: -250px; }
+      .sidebar.show { left: 0; }
+      .main {
+        margin-left: 0;
+        width: 100%;
+        padding: 60px 20px 20px;
+      }
+      .toggle-btn {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="toggle-btn" onclick="toggleSidebar()">☰</div>
+
+<nav class="sidebar" id="sidebar">
+  <h3>CHF 後台選單</h3>
+  <ul>
+    <li onclick="toggleSubMenu('productMenu')">商品管理 ▾</li>
+    <ul class="submenu" id="productMenu">
+      <li style="font-weight:bold;color:#4f46e5;">商品分類</li>
+      <li>商品列表</li>
+      <li>庫存管理</li>
+      <li>商品排序</li>
+    </ul>
+    <li onclick="toggleSubMenu('orderMenu')">訂單管理 ▾</li>
+    <ul class="submenu" id="orderMenu">
+      <li>所有訂單</li>
+      <li>訂單設定</li>
+    </ul>
+    <li onclick="toggleSubMenu('promoMenu')">促銷管理 ▾</li>
+    <ul class="submenu" id="promoMenu">
+      <li>購物金管理</li>
+      <li>免運促銷</li>
+      <li>全單優惠</li>
+      <li>指定優惠</li>
+    </ul>
+    <li onclick="toggleSubMenu('memberMenu')">會員管理 ▾</li>
+    <ul class="submenu" id="memberMenu">
+      <li>會員列表</li>
+      <li>功能設定</li>
+      <li>等級設定</li>
+      <li>訊息管理</li>
+    </ul>
+    <li onclick="toggleSubMenu('siteMenu')">官網設定 ▾</li>
+    <ul class="submenu" id="siteMenu">
+      <li>頁面管理</li>
+      <li>商品設定</li>
+      <li>基本資訊</li>
+      <li>收款管理</li>
+      <li>送貨管理</li>
+      <li>退貨管理</li>
+    </ul>
+    <li>店員管理</li>
+    <li>分銷連結</li>
+    <li>登出</li>
+  </ul>
+</nav>
+
+<div class="main">
+  <h2>這是範本頁</h2>
+  <p>請根據這個頁面開始建立其他功能頁面。</p>
+</div>
+
+<script>
+function toggleSubMenu(id) {
+  const submenu = document.getElementById(id);
+  submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
+}
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.classList.toggle('show');
+}
+</script>
+
+</body>
+</html>

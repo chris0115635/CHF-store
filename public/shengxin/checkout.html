@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>結帳</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f2f2f2; }
+    h2 { text-align: center; margin-bottom: 30px; }
+    .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; }
+    input[type="text"], input[type="tel"] {
+      width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;
+    }
+    .cart-items { margin-top: 20px; }
+    .cart-item { border-bottom: 1px solid #ddd; padding: 10px 0; }
+    .submit-btn {
+      background: black; color: white; border: none; padding: 15px; width: 100%;
+      font-size: 16px; border-radius: 5px; cursor: pointer;
+    }
+    .submit-btn:hover { background: #333; }
+    form {
+  padding: 0 20px;
+}
+
+input[type="text"],
+input[type="tel"],
+textarea {
+  width: 100%;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-bottom: 16px;
+}
+.cart-summary {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>結帳資訊</h2>
+    <form id="checkoutForm">
+      <div class="form-group">
+        <label for="name">收件人姓名</label>
+        <input type="text" id="name" name="name" required />
+      </div>
+      <div class="form-group">
+        <label for="phone">聯絡電話</label>
+        <input type="tel" id="phone" name="phone" required />
+      </div>
+      <div class="form-group">
+        <label for="address">收件地址</label>
+        <input type="text" id="address" name="address" required />
+      </div>
+
+      <div class="cart-items" id="cartItems"></div>
+
+      <button type="submit" class="submit-btn">送出訂單</button>
+    </form>
+  </div>
+
+  <script>
+    // ✅ 未登入自動導向登入頁
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("請先登入會員");
+      window.location.href = "/shengxin/login.html";
+    }
+
+    // ✅ 顯示購物車內容（來自 localStorage）
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const cartItemsEl = document.getElementById("cartItems");
+    if (cart.length === 0) {
+      cartItemsEl.innerHTML = "<p>購物車是空的。</p>";
+    } else {
+      cart.forEach(item => {
+  const itemDiv = document.createElement('div');
+  itemDiv.classList.add('cart-summary');
+
+  const specsText = Object.entries(item.specs || {})
+    .map(([key, val]) => `${key}：${val}`)
+    .join(" / ");
+
+  itemDiv.innerHTML = `
+    <p><strong>${item.name}</strong></p>
+    <p>規格：${specsText}</p>
+    <p>數量：${item.quantity}</p>
+  `;
+
+  cartItemsEl.appendChild(itemDiv);
+});
+
+    }
+
+    // ✅ 提交訂單
+    document.getElementById("checkoutForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const phone = document.getElementById("phone").value;
+      const address = document.getElementById("address").value;
+
+      try {
+        const res = await fetch("/api/orders", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            items: cart,
+            recipient: { name, phone, address }
+          })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "下單失敗");
+
+        alert("訂單已成功送出！");
+        localStorage.removeItem("cart");
+        window.location.href = "/shengxin/success.html";
+      } catch (err) {
+        alert("❌ 下單失敗：" + err.message);
+      }
+    });
+  </script>
+</body>
+</html>

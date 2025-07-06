@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>購物車</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/index.css" />
+  <style>
+    .cart-item {
+      display: flex;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid #ddd;
+      align-items: flex-start;
+    }
+
+    .cart-item img {
+      width: 100px;
+      height: auto;
+      border-radius: 6px;
+      object-fit: cover;
+    }
+
+    .cart-item .info {
+      flex-grow: 1;
+    }
+
+    .cart-item h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .cart-item .specs {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 8px;
+    }
+
+    .cart-item .actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 8px;
+      gap: 12px;
+    }
+
+    .cart-item .quantity-control {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cart-item .remove-btn {
+      margin-left: 12px;
+    }
+
+    .cart-item button {
+      padding: 4px 10px;
+      background: white;
+      border: 1px solid #999;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .cart-total {
+      text-align: right;
+      font-weight: bold;
+      margin-top: 20px;
+      font-size: 18px;
+    }
+
+    .cart-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .cart-item {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .cart-item img {
+        width: 80%;
+        max-width: 200px;
+      }
+
+      .cart-item .actions {
+        justify-content: center;
+      }
+    }
+
+    .cart-item .actions button:last-child {
+      margin-left: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-banner">加入會員贈購物金$100</div>
+  <header class="navbar">
+    <div class="nav-left">
+      <button class="menu-btn" id="menuToggle">
+        <span class="material-icons">menu</span>
+      </button>
+    </div>
+    <div class="nav-center">
+      <img src="../shengxin/聖欣LOGO.png" alt="Logo" class="logo" onclick="location.href='/'">
+    </div>
+    <div class="nav-right">
+      <span class="material-icons">search</span>
+      <span class="material-icons">shopping_cart</span>
+      <span class="material-icons">list_alt</span>
+      <span class="material-icons person-icon">person</span>
+    </div>
+  </header>
+
+  <nav class="desktop-category-bar category-list-on-page" id="desktopCategoryBar"></nav>
+  <aside class="side-menu" id="sideMenu">
+    <button class="close-btn" id="closeMenu">✕</button>
+    <div class="menu-logo">
+      <img src="../shengxin/聖欣LOGO.png" alt="Logo" />
+    </div>
+    <div class="search-box">
+      <input type="text" placeholder="找商品">
+      <button><span class="material-icons">search</span></button>
+    </div>
+    <ul class="category-list" id="categoryList"></ul>
+  </aside>
+
+  <section class="cart-section">
+    <h2>購物車</h2>
+    <div id="cartItems"></div>
+    <div class="cart-total">
+      <p>總計：<span id="totalPrice">NT$0</span></p>
+    </div>
+    <div class="cart-buttons">
+      <button id="checkoutBtn">結帳</button>
+      <button id="clearCartBtn">清空購物車</button>
+    </div>
+  </section>
+
+<script>
+document.getElementById("menuToggle")?.addEventListener("click", () => {
+  document.getElementById("sideMenu")?.classList.add("open");
+});
+document.getElementById("closeMenu")?.addEventListener("click", () => {
+  document.getElementById("sideMenu")?.classList.remove("open");
+});
+
+// ✅ 小人頭跳轉登入頁
+document.querySelector('.material-icons.person-icon')?.addEventListener('click', () => {
+  const brand = window.location.pathname.split('/')[1];
+  window.location.href = `/${brand}/login.html`;
+});
+
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+const cartItemsContainer = document.getElementById('cartItems');
+const totalPriceElement = document.getElementById('totalPrice');
+
+function renderCart() {
+  cartItemsContainer.innerHTML = '';
+  let totalPrice = 0;
+
+  if (cart.length === 0) {
+    cartItemsContainer.innerHTML = '<p>目前購物車沒有商品。</p>';
+    totalPriceElement.textContent = 'NT$0';
+    return;
+  }
+
+  cart.forEach(item => {
+    const itemElement = document.createElement('div');
+    itemElement.classList.add('cart-item');
+
+    const specsText = Object.entries(item.specs || {})
+      .map(([key, val]) => `${key}：${val}`)
+      .join(" / ");
+
+    itemElement.innerHTML = `
+      <img src="${item.image}" alt="${item.name}">
+      <div class="info">
+        <h3>${item.name}</h3>
+        <div class="specs">${specsText}</div>
+        <div class="actions">
+          <div class="quantity-control">
+            <button onclick="decreaseQuantity('${item.id}', ${JSON.stringify(item.specs)})">-</button>
+            <span>數量：${item.quantity}</span>
+            <button onclick="increaseQuantity('${item.id}', ${JSON.stringify(item.specs)})">+</button>
+          </div>
+          <div class="remove-btn">
+            <button onclick='removeItem("${item.id}", ${JSON.stringify(item.specs)})'>移除</button>
+          </div>
+        </div>
+      </div>
+    `;
+    cartItemsContainer.appendChild(itemElement);
+    totalPrice += item.price * item.quantity;
+  });
+
+  totalPriceElement.textContent = `NT$${totalPrice}`;
+}
+
+function increaseQuantity(id, specs) {
+  const item = cart.find(i => i.id === id && JSON.stringify(i.specs) === JSON.stringify(specs));
+  if (item) {
+    item.quantity++;
+    localStorage.setItem('cart', JSON.stringify(cart));
+    renderCart();
+  }
+}
+
+function decreaseQuantity(id, specs) {
+  const item = cart.find(i => i.id === id && JSON.stringify(i.specs) === JSON.stringify(specs));
+  if (item && item.quantity > 1) {
+    item.quantity--;
+    localStorage.setItem('cart', JSON.stringify(cart));
+    renderCart();
+  }
+}
+
+function removeItem(id, specs) {
+  cart = cart.filter(i =>
+    !(i.id === id && JSON.stringify(i.specs) === JSON.stringify(specs))
+  );
+  localStorage.setItem('cart', JSON.stringify(cart));
+  renderCart();
+}
+
+document.getElementById('clearCartBtn').addEventListener('click', () => {
+  localStorage.removeItem('cart');
+  renderCart();
+});
+
+document.getElementById('checkoutBtn').addEventListener('click', () => {
+  if (cart.length === 0) {
+    alert('購物車內沒有商品，無法結帳！');
+    return;
+  }
+
+  const token = localStorage.getItem('memberToken');
+  if (!token) {
+    alert('請先登入才能結帳');
+    window.location.href = '/shengxin/login.html';
+    return;
+  }
+
+  window.location.href = '/shengxin/checkout.html';
+});
+
+renderCart();
+
+// 載入分類
+const brand = window.location.pathname.split("/")[1];
+fetch(`/api/categories?brand=${brand}`)
+  .then(res => res.json())
+  .then(categories => {
+    const list = document.getElementById("categoryList");
+    const nav = document.getElementById("desktopCategoryBar");
+    if (!list || !nav) return;
+
+    list.innerHTML = "";
+    nav.innerHTML = "";
+
+    categories.forEach((cat) => {
+      const li = document.createElement("li");
+      li.innerHTML = `<a href="/${brand}/categories.html?cat=${cat.name}">${cat.name}</a>`;
+      list.appendChild(li);
+
+      const link = document.createElement("a");
+      link.href = `/${brand}/categories.html?cat=${cat.name}`;
+      link.textContent = cat.name;
+      nav.appendChild(link);
+    });
+  })
+  .catch((err) => {
+    console.error("❌ 載入分類失敗", err);
+  });
+</script>
+</body>
+</html>
+
+

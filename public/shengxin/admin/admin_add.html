@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>新增 / 編輯商品</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body>
+  <div class="sidebar">
+    <h2>CHF 後台選單</h2>
+    <ul>
+      <li><a href="/shengxin/admin/dashboard.html">首頁</a></li>
+      <li><a href="/shengxin/admin/admin_categories.html">商品分類</a></li>
+      <li><a href="/shengxin/admin/admin_products.html">商品列表</a></li>
+      <li><a href="/shengxin/admin/admin_account.html">官網設定</a></li>
+      <li><a href="/shengxin/admin/login.html">登出</a></li>
+    </ul>
+  </div>
+
+  <div class="main">
+    <h1>新增 / 編輯商品</h1>
+    <form id="productForm">
+      <label>商品名稱：
+        <input type="text" id="name" required />
+      </label><br /><br />
+
+      <label>商品價格：
+        <input type="number" id="price" required />
+      </label><br /><br />
+
+      <label>商品原價（可選填）：  
+        <input type="number" id="originalPrice" />
+      </label><br /><br />
+
+      <label>商品圖片（可選多張）：
+        <input type="file" id="imageFiles" multiple accept="image/*" />
+      </label><br /><br />
+
+      <div id="imagePreview"></div><br />
+
+      <label>
+        是否為新品：
+        <input type="checkbox" id="isNew" />
+      </label><br /><br />
+
+      <label>
+        是否上架：
+        <input type="checkbox" id="isActive" checked />
+      </label><br /><br />
+
+      <div id="categoryList"></div><br />
+
+      <div id="specsSection">
+        <h3>商品規格</h3>
+        <div id="specsContainer"></div>
+        <div>
+          <input type="text" id="newSpecName" placeholder="例如：顏色、尺碼" />
+          <input type="text" id="newSpecOptions" placeholder="選項以逗號分隔，例如：黑色,白色" />
+          <button type="button" onclick="addSpec()">新增規格</button>
+        </div>
+      </div><br />
+      
+
+      <button type="submit">儲存商品</button>
+    </form>
+  </div>
+
+
+  <script src="/js/admin_add.js"></script>
+</body>
+</html>
+
+
+

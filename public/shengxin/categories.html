@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>寓棠選貨｜商品分類</title>
+
+  <link rel="stylesheet" href="../css/index.css" />
+  <script defer src="/js/index.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <style>
+    .product-card {
+      text-align: center;
+      position: relative;
+      transition: transform 0.3s ease;
+      background: white;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .image-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1/1;
+      overflow: hidden;
+    }
+
+    .image-container img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: opacity 0.3s ease;
+    }
+
+    .image-container img.hover-img {
+      opacity: 0;
+    }
+
+    .product-card:hover .hover-img {
+      opacity: 1;
+    }
+
+    .product-card:hover .main-img {
+      opacity: 0;
+    }
+
+    .tag {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: black;
+      color: white;
+      font-size: 12px;
+      padding: 2px 6px;
+      z-index: 2;
+    }
+
+    .product-card button {
+      background: black;
+      color: white;
+      padding: 6px 12px;
+      border: none;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    @media screen and (min-width: 1024px) {
+      .desktop-layout {
+        display: flex;
+        gap: 40px;
+        justify-content: center;
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .vertical-category-menu {
+        width: 180px;
+        border-right: 1px solid #ccc;
+      }
+
+      .vertical-category-menu ul {
+        list-style: none;
+        padding-left: 0;
+      }
+
+      .vertical-category-menu li {
+        margin-bottom: 12px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      .vertical-category-menu li:hover {
+        text-decoration: underline;
+      }
+
+      .product-section {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 32px;
+      }
+    }
+
+    @media screen and (max-width: 1023px) {
+      .vertical-category-menu {
+        display: none;
+      }
+
+      .product-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 24px;
+        padding: 20px;
+      }
+
+      .desktop-layout {
+        display: block;
+      }
+    }
+
+    .spec-group {
+      margin: 20px 0;
+    }
+
+    .spec-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-start;
+    }
+
+    .spec-options button {
+      padding: 8px 12px;
+      min-width: 60px;
+      border: 1px solid #ccc;
+      background: white;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .spec-options button.active {
+      background: black;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-banner">加入會員贈購物金$100</div>
+
+  <header class="navbar">
+    <div class="nav-left">
+      <button class="menu-btn" id="menuToggle">
+        <span class="material-icons">menu</span>
+      </button>
+    </div>
+
+    <div class="nav-center">
+      <img src="../shengxin/聖欣LOGO.png" alt="Logo" class="logo" onclick="location.href='/'">
+    </div>
+
+    <div class="nav-right">
+      <span class="material-icons">search</span>
+      <span class="material-icons shopping_cart">shopping_cart</span>
+      <span class="material-icons">list_alt</span>
+      <span class="material-icons person-icon">person</span>
+    </div>
+  </header>
+
+  <nav class="desktop-category-bar category-list-on-page" id="desktopCategoryBar"></nav>
+
+  <aside class="side-menu" id="sideMenu">
+    <button class="close-btn" id="closeMenu">✕</button>
+    <div class="menu-logo">
+      <img src="../shengxin/聖欣LOGO.png" alt="Logo">
+    </div>
+    <div class="search-box">
+      <input type="text" placeholder="找商品">
+      <button><span class="material-icons">search</span></button>
+    </div>
+    <ul class="category-list" id="categoryList"></ul>
+  </aside>
+
+  <h2 id="categoryTitle" style="text-align:left; font-weight:bold; font-size:20px; margin: 20px;">分類名稱</h2>
+
+  <div class="desktop-layout">
+    <aside class="vertical-category-menu" id="verticalMenu"></aside>
+    <section id="productList" class="product-section"></section>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const categoryName = urlParams.get("cat") || "全部商品";
+      document.getElementById("categoryTitle").textContent = categoryName;
+
+      const currentBrand = window.location.pathname.split("/")[1];
+
+      // ✅ 點右上角小人頭跳轉到登入頁
+      const personIcon = document.querySelector('.material-icons.person-icon');
+      if (personIcon) {
+        personIcon.addEventListener('click', () => {
+          window.location.href = `/${currentBrand}/login.html`;
+        });
+      }
+
+      try {
+        const resCats = await fetch(`/api/categories?brand=${currentBrand}`);
+        const categories = await resCats.json();
+        const selectedCategory = categories.find(cat => cat.name === categoryName);
+        const categoryId = selectedCategory?._id;
+
+        const menu = document.getElementById("verticalMenu");
+        const ul = document.createElement("ul");
+        categories.forEach(cat => {
+          const li = document.createElement("li");
+          li.textContent = cat.name;
+          li.onclick = () => {
+            window.location.href = `/${currentBrand}/categories.html?cat=${encodeURIComponent(cat.name)}`;
+          };
+          ul.appendChild(li);
+        });
+        menu.appendChild(ul);
+
+        const resProducts = await fetch(`/api/products/public?brand=${currentBrand}`);
+        const products = await resProducts.json();
+
+        const filtered = categoryId
+          ? products.filter(p => Array.isArray(p.categories) && p.categories.includes(categoryId))
+          : products;
+
+        const list = document.getElementById("productList");
+        list.innerHTML = "";
+
+        filtered.forEach(p => {
+          const isNew = p.isNew ? `<span class="tag">New</span>` : "";
+          const img1 = p.images?.[0] || "";
+          const img2 = p.images?.[1] || img1;
+          const imgSrc1 = img1.startsWith('/uploads/') ? img1 : `/uploads/${img1}`;
+          const imgSrc2 = img2.startsWith('/uploads/') ? img2 : `/uploads/${img2}`;
+
+          const card = document.createElement("div");
+          card.className = "product-card";
+          card.innerHTML = `
+            <div class="image-container">
+              ${isNew}
+              <a href="/${currentBrand}/product.html?id=${p._id}">
+                <img src="${imgSrc1}" class="main-img">
+                <img src="${imgSrc2}" class="hover-img">
+              </a>
+            </div>
+            <h3>${p.name}</h3>
+            ${p.originalPrice && p.originalPrice > p.price
+              ? `<p><del>NT$${p.originalPrice}</del><br><strong>NT$${p.price}</strong> 含運</p>`
+              : `<p>NT$${p.price} 含運</p>`}
+            <button>加入購物車</button>
+          `;
+          list.appendChild(card);
+        });
+
+        if (filtered.length === 0) {
+          list.innerHTML = "<p style='padding:20px;'>目前此分類尚無商品。</p>";
+        }
+      } catch (err) {
+        console.error("❌ 發生錯誤：", err);
+      }
+
+      // ✅ 購物車 icon 點擊跳轉 cart.html
+      document.querySelector('.material-icons.shopping_cart')?.addEventListener('click', () => {
+        const brand = window.location.pathname.split("/")[1];
+        location.href = `/${brand}/cart.html`;
+      });
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
