@@ -86,7 +86,7 @@
 
   // 結帳處理
   document.getElementById("checkoutBtn").addEventListener("click", () => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("memberToken");
   if (!token) {
     alert("請先登入才能結帳！");
     window.location.href = "/shengxin/login.html";
