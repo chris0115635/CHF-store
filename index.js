@@ -15,12 +15,12 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static("public")); // 靜態檔案
+app.use(express.static(path.join(__dirname, "public")));; // 靜態檔案
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 
 // ✅ 回傳首頁 index.html（修正 Cannot GET /）
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  res.redirect("/shengxin/index.html");
 });
 
 // ✅ 載入所有 routes
