@@ -66,7 +66,7 @@ textarea {
 
   <script>
     // ✅ 未登入自動導向登入頁
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("memberToken");
     if (!token) {
       alert("請先登入會員");
       window.location.href = "/shengxin/login.html";
