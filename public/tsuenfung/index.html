@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>鮮知道水產｜首頁</title>
+  <link rel="stylesheet" href="/css/index.css" />
+  <script defer src="/js/index.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <style>
+    .top-banner {
+      background: black;
+      color: white;
+      text-align: center;
+      padding: 4px 0;
+      font-size: 14px;
+    }
+
+    .abupan-header {
+      padding: 4px 16px 12px;
+      border-bottom: 1px solid #ccc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .header-icons {
+      position: absolute;
+      top: 4px;
+      right: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .material-icons {
+      font-size: 28px;
+      cursor: pointer;
+    }
+
+    .menu-icon {
+      position: absolute;
+      top: 4px;
+      left: 16px;
+      font-size: 32px;
+      cursor: pointer;
+    }
+
+    .logo-wrapper {
+      margin-top: 32px;
+      text-align: center;
+    }
+
+    .abupan-logo {
+      height: 100px;
+      cursor: pointer;
+    }
+
+    .abupan-nav {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      background: #f3f3f3;
+      padding: 12px 0;
+      font-weight: bold;
+      flex-wrap: wrap;
+    }
+
+    .abupan-nav a {
+      color: #222;
+      text-decoration: none;
+    }
+
+    .abupan-nav a:hover {
+      text-decoration: underline;
+    }
+
+    .side-menu {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      height: 100%;
+      background: #fff;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      padding: 20px;
+      flex-direction: column;
+    }
+
+    .side-menu.open {
+      display: flex;
+    }
+
+    .side-menu .close-btn {
+      align-self: flex-end;
+      font-size: 20px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      margin-bottom: 12px;
+    }
+
+    .side-menu .menu-logo img {
+      height: 60px;
+      margin-bottom: 16px;
+    }
+
+    .side-menu .search-box {
+      display: flex;
+      margin-bottom: 16px;
+    }
+
+    .side-menu .search-box input {
+      flex-grow: 1;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px 0 0 4px;
+    }
+
+    .side-menu .search-box button {
+      padding: 6px;
+      background: #eee;
+      border: 1px solid #ccc;
+      border-left: none;
+      border-radius: 0 4px 4px 0;
+      cursor: pointer;
+    }
+
+    .side-menu ul.category-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .side-menu ul.category-list li a {
+      color: #333;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .side-menu ul.category-list li a:hover {
+      text-decoration: underline;
+    }
+
+    @media (min-width: 769px) {
+      .menu-icon {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-banner">加入會員贈購物金$100</div>
+
+  <header class="abupan-header">
+    <div class="menu-icon material-icons" id="menuToggle">menu</div>
+    <div class="header-icons">
+      <span class="material-icons shopping_cart">shopping_cart</span>
+      <span class="material-icons">list_alt</span>
+      <span class="material-icons person-icon">person</span>
+    </div>
+    <div class="logo-wrapper">
+      <img src="筌峰LOGO.png" alt="筌峰 LOGO" class="abupan-logo" onclick="location.href='/tsuenfung/index.html'"
+ />
+    </div>
+  </header>
+
+  <nav class="abupan-nav" id="desktopCategoryBar"></nav>
+
+  <aside class="side-menu" id="sideMenu">
+    <button class="close-btn" id="closeMenu">✕</button>
+    <div class="menu-logo">
+      <img src="筌峰LOGO.png" alt="Logo">
+    </div>
+    <div class="search-box">
+      <input type="text" placeholder="找商品">
+      <button><span class="material-icons">search</span></button>
+    </div>
+    <ul class="category-list" id="categoryList"></ul>
+  </aside>
+
+  <main class="main-banner">
+    <picture>
+      <source media="(max-width: 768px)" srcset="./banner_wide.png">
+      <img src="./banner_wide.png" alt="主視覺">
+    </picture>
+  </main>
+
+  <section class="product-section" id="productList"></section>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const currentBrand = window.location.pathname.split("/")[1];
+
+      document.querySelector('.material-icons.person-icon')?.addEventListener('click', () => {
+        window.location.href = `/${currentBrand}/login.html`;
+      });
+      document.querySelector('.material-icons.shopping_cart')?.addEventListener('click', () => {
+        window.location.href = `/${currentBrand}/cart.html`;
+      });
+      document.getElementById('menuToggle')?.addEventListener('click', () => {
+        document.getElementById('sideMenu')?.classList.add('open');
+      });
+      document.getElementById('closeMenu')?.addEventListener('click', () => {
+        document.getElementById('sideMenu')?.classList.remove('open');
+      });
+
+      fetch(`/api/categories?brand=${currentBrand}`)
+        .then(res => res.json())
+        .then(categories => {
+          const listEl = document.getElementById("categoryList");
+          const barEl = document.getElementById("desktopCategoryBar");
+          listEl.innerHTML = barEl.innerHTML = "";
+
+          categories.forEach(cat => {
+            const li = document.createElement("li");
+            const a = document.createElement("a");
+            a.textContent = cat.name;
+            a.href = `/${currentBrand}/categories.html?cat=${cat.name}`;
+            li.appendChild(a);
+            listEl.appendChild(li);
+
+            const navA = a.cloneNode(true);
+            barEl.appendChild(navA);
+          });
+        });
+
+      fetch(`/api/products/public?brand=${currentBrand}`)
+        .then(res => res.json())
+        .then(products => {
+          const list = document.getElementById("productList");
+          list.innerHTML = "";
+
+          products.forEach(p => {
+            const card = document.createElement("div");
+            card.className = "product-card";
+
+            const img1 = p.images?.[0] || "";
+            const img2 = p.images?.[1] || img1;
+            const tag = p.isNew ? `<div class='tag'>NEW</div>` : "";
+
+            card.innerHTML = `
+              <a href='/${currentBrand}/product.html?id=${p._id}'>
+                ${tag}
+                <img src='${img1}' onmouseover="this.src='${img2}'" onmouseout="this.src='${img1}'">
+                <h3>${p.name}</h3>
+                <p class="sale-price">$${p.price.toLocaleString()} / 包</p>
+              </a>
+            `;
+            list.appendChild(card);
+          });
+        });
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+

@@ -69,4 +69,39 @@ td img {
   border-radius: 6px;
 }
 
-/* 分頁*
+/* 表單欄位 label 與輸入欄位排版 */
+form label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+/* 輸入欄位與 textarea 通用樣式 */
+form input[type="text"],
+form input[type="number"],
+form input[type="email"],
+form input[type="file"],
+form textarea,
+form select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* textarea 額外加一點高度與間距 */
+form textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.5;
+}
+.main {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: white;
+  padding: 20px 30px;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+}

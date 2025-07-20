@@ -68,6 +68,7 @@ async function loadProduct() {
     document.getElementById("originalPrice").value = p.originalPrice || "";
     document.getElementById("isNew").checked = p.isNew;
     document.getElementById("isActive").checked = p.isActive;
+    document.getElementById("description").value = p.description || "";
     uploadedImageUrls = p.images || [];
 
     const selectedCategoryIds = (p.categories || []).map(c => c._id || c);
@@ -137,6 +138,7 @@ if (originalPriceInput !== "") {
   try {
     const newImages = await uploadImages();
 const images = newImages.length > 0 ? newImages : uploadedImageUrls; // ✅ 用舊的圖（編輯時）
+const description = document.getElementById("description").value.trim();
 
 const body = {
   name,
@@ -146,6 +148,7 @@ const body = {
   categories: selectedCategories,
   images,
   specs,
+  description,
 };
 
 if (originalPrice !== undefined) {
@@ -166,8 +169,10 @@ console.log("🧪 送出的資料：", body);
 
     if (res.ok) {
       alert("✅ 商品儲存成功！");
-      window.location.href = "/shengxin/admin/admin_products.html";
-    } else {
+      const brand = window.location.pathname.split("/")[1]; // ⬅️ 品牌自動判斷
+       window.location.href = `/${brand}/admin/admin_products.html`;
+       }    
+       else {
       const err = await res.json();
       alert("❌ 儲存失敗：" + err.message);
     }

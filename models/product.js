@@ -35,6 +35,10 @@ const productSchema = new mongoose.Schema({
       options: [String]
     }
   ],
+  description: {
+  type: String,
+  default: "",
+},
   owner: {
     type: String, // 所屬品牌識別（如 shengxin）
     required: true,

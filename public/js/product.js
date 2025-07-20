@@ -32,13 +32,15 @@ fetch(`/api/products/public/${productId}`)
     // 商品名稱與價格
     document.getElementById("productName").textContent = data.name || "未命名商品";
     const priceElement = document.getElementById("productPrice");
+    
 
 let priceText = `NT$${data.price}（含運!!）`;
 if (data.originalPrice && data.originalPrice > data.price) {
   priceText = `<del>NT$${data.originalPrice}</del> → <strong>${priceText}</strong>`;
 }
 priceElement.innerHTML = priceText;
-
+// 商品說明
+    document.getElementById("productDescription").innerHTML = data.description || "";
     // 商品主圖與縮圖處理
     const images = data.images || [];
     const mainImage = images[0] || "/uploads/no-image.png";
