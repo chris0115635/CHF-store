@@ -81,6 +81,7 @@ const createProduct = async (req, res) => {
       specs,
       isNew,
       isActive,
+      description,
     } = req.body;
 
     const product = new Product({
@@ -92,6 +93,7 @@ const createProduct = async (req, res) => {
       specs,
       isNew,
       isActive,
+      description,
       owner: req.user.owner,
     });
 
@@ -116,6 +118,7 @@ const updateProduct = async (req, res) => {
       specs,
       isNew,
       isActive,
+      description,
     } = req.body;
 
     const updated = await Product.findOneAndUpdate(
@@ -127,6 +130,7 @@ const updateProduct = async (req, res) => {
         categories,
         images,
         specs,
+        description,
         isNew,
         isActive,
       },

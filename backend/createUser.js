@@ -9,9 +9,9 @@ const createUser = async () => {
       useUnifiedTopology: true,
     });
 
-    const email = 'yc16899@example.com';
+    const email = 'tf0716@example.com';
     const rawPassword = '123123';
-    const owner = 'shengxin';
+    const owner = 'tsuenfung';
 
     const user = new User({
       email,

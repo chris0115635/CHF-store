@@ -20,25 +20,26 @@
       font-size: 16px; border-radius: 5px; cursor: pointer;
     }
     .submit-btn:hover { background: #333; }
+
     form {
-  padding: 0 20px;
-}
+      padding: 0 20px;
+    }
 
-input[type="text"],
-input[type="tel"],
-textarea {
-  width: 100%;
-  padding: 8px 12px;
-  box-sizing: border-box;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  margin-bottom: 16px;
-}
-.cart-summary {
-  border-bottom: 1px solid #ddd;
-  padding: 10px 0;
-}
+    input[type="text"],
+    input[type="tel"],
+    textarea {
+      width: 100%;
+      padding: 8px 12px;
+      box-sizing: border-box;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-bottom: 16px;
+    }
 
+    .cart-summary {
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+    }
   </style>
 </head>
 <body>
@@ -65,36 +66,38 @@ textarea {
   </div>
 
   <script>
-    // ✅ 未登入自動導向登入頁
+    // ⛳️ 取得品牌資料夾名稱
+    const currentBrand = window.location.pathname.split("/")[1];
     const token = localStorage.getItem("memberToken");
+
+    // ✅ 檢查登入狀態
     if (!token) {
       alert("請先登入會員");
-      window.location.href = "/shengxin/login.html";
+      window.location.href = `/${currentBrand}/login.html`;
     }
 
-    // ✅ 顯示購物車內容（來自 localStorage）
+    // ✅ 顯示購物車內容
     const cart = JSON.parse(localStorage.getItem("cart") || "[]");
     const cartItemsEl = document.getElementById("cartItems");
     if (cart.length === 0) {
       cartItemsEl.innerHTML = "<p>購物車是空的。</p>";
     } else {
       cart.forEach(item => {
-  const itemDiv = document.createElement('div');
-  itemDiv.classList.add('cart-summary');
+        const itemDiv = document.createElement('div');
+        itemDiv.classList.add('cart-summary');
 
-  const specsText = Object.entries(item.specs || {})
-    .map(([key, val]) => `${key}：${val}`)
-    .join(" / ");
+        const specsText = Object.entries(item.specs || {})
+          .map(([key, val]) => `${key}：${val}`)
+          .join(" / ");
 
-  itemDiv.innerHTML = `
-    <p><strong>${item.name}</strong></p>
-    <p>規格：${specsText}</p>
-    <p>數量：${item.quantity}</p>
-  `;
+        itemDiv.innerHTML = `
+          <p><strong>${item.name}</strong></p>
+          <p>規格：${specsText}</p>
+          <p>數量：${item.quantity}</p>
+        `;
 
-  cartItemsEl.appendChild(itemDiv);
-});
-
+        cartItemsEl.appendChild(itemDiv);
+      });
     }
 
     // ✅ 提交訂單
@@ -122,7 +125,7 @@ textarea {
 
         alert("訂單已成功送出！");
         localStorage.removeItem("cart");
-        window.location.href = "/shengxin/success.html";
+        window.location.href = `/${currentBrand}/success.html`;
       } catch (err) {
         alert("❌ 下單失敗：" + err.message);
       }

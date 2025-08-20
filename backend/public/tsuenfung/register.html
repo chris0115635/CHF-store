@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>註冊會員</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/index.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px 20px;
+      max-width: 400px;
+      margin: auto;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: black;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .link {
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    .link a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h2>註冊會員</h2>
+  <form id="registerForm">
+    <input type="email" id="email" placeholder="電子信箱" required />
+    <input type="password" id="password" placeholder="密碼" required />
+    <button type="submit">註冊</button>
+  </form>
+  <div class="link">
+    已經有帳號？<a id="loginLink" href="#">登入</a>
+  </div>
+
+  <script>
+    const brand = location.pathname.split("/")[1]; // 取得品牌資料夾名稱
+
+    document.getElementById("loginLink").href = `/${brand}/login.html`; // 修正下方連結
+
+    document.getElementById("registerForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        const res = await fetch("/api/users/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password, owner: brand }),
+        });
+
+        const result = await res.json();
+
+        if (!res.ok) throw new Error(result.message || "註冊失敗");
+
+        alert("✅ 註冊成功，請登入！");
+        window.location.href = `/${brand}/login.html`;
+      } catch (err) {
+        alert("❌ " + err.message);
+      }
+    });
+  </script>
+</body>
+</html>
+
